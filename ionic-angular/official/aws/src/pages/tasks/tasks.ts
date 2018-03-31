@@ -1,3 +1,5 @@
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
+
 import { Component } from '@angular/core';
 
 import { NavController, ModalController } from 'ionic-angular';
@@ -48,7 +50,8 @@ export class TasksPage {
       'ScanIndexForward': false
     };
     this.db.getDocumentClient()
-      .then(client => client.query(params).promise())
+      //.then(client => client.query(params).promise())
+	.then(client => (client as DocumentClient).query(params).promise())
       .then(data => { this.items = data.Items; })
       .catch(err => logger.debug('error in refresh tasks', err))
       .then(() => { this.refresher && this.refresher.complete() });
@@ -79,7 +82,8 @@ export class TasksPage {
         'ConditionExpression': 'attribute_not_exists(id)'
       };
       this.db.getDocumentClient()
-        .then(client => client.put(params).promise())
+        //.then(client => client.put(params).promise())
+.then(client => (client as DocumentClient).put(params).promise())
         .then(data => this.refreshTasks())
         .catch(err => logger.debug('add task error', err));
     })
@@ -95,7 +99,8 @@ export class TasksPage {
       }
     };
     this.db.getDocumentClient()
-      .then(client => client.delete(params).promise())
+      //.then(client => client.delete(params).promise())
+.then(client => (client as DocumentClient).delete(params).promise())
       .then(data => this.items.splice(index, 1))
       .catch((err) => logger.debug('delete task error', err));
   }
